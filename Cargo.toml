@@ -3,5 +3,5 @@ name = "amp-examples"
 version = "0.1.0" 
 authors = ["ykonomi <hgKaguyaToupako4er@gmail.com>"]
 
-[dev-dependencies]
-actix-web = "0.7.6"
+[dependencies]
+actix-web = "0.7.8"
