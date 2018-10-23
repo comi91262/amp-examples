@@ -6,3 +6,10 @@ authors = ["ykonomi <hgKaguyaToupako4er@gmail.com>"]
 [dependencies]
 actix = "0.7.4"
 actix-web = "0.7.8"
+askama = "0.7"
+
+[build-dependencies]
+actix = "0.7.4"
+actix-web = "0.7.8"
+askama = "0.7"
+

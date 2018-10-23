@@ -1,7 +1,21 @@
 extern crate actix;
 extern crate actix_web;
+#[macro_use]
+extern crate askama; // for the Template trait and custom derive macro
 
-use actix_web::{http::Method, server::HttpServer, App, HttpRequest};
+#[derive(Template)] // this will generate the code...
+#[template(path = "index.html")] // using the template in this path, relative
+
+struct HelloTemplate<'a> { // the name of the struct can be anything
+    name: &'a str, // the field name should match the variable name
+                   // in your template
+}
+
+
+use askama::Template; // bring trait in scope
+use actix_web::{http::Method, server::HttpServer, App, HttpRequest, HttpResponse, Result};
+
+
 
 fn main() {
     let sys = actix::System::new("guide");
@@ -18,16 +32,18 @@ fn main() {
     let _ = sys.run();
 }
 
-fn index(_req: &HttpRequest) -> &'static str {
-    r"
-    こちらはAMPのデモになります
-    - AMPの基本 (http://127.0.0.1:8080/first)
-    "
+fn index(_req: &HttpRequest) -> Result<HttpResponse> {
+    let hello = HelloTemplate { name: "world" }; 
+    Ok(HttpResponse::Ok().content_type("text/html").body(hello.render().unwrap()))
 }
 
 fn start(_req: &HttpRequest) -> &'static str {
     r"
     こちらはAMPのデモになります
-    - AMPの基本 (http://127.0.0.1:8080/first)
+    <a href='http://127.0.0.1:8080/first'>AMPの基本</a>
     "
 }
+
+
+
+   
