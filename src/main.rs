@@ -20,17 +20,18 @@ struct BasisTemplate<'a> {
                    // in your template
 }
 
-use actix_web::{http::Method, server::HttpServer, App, HttpRequest, HttpResponse, Result};
+use actix_web::{http::Method, server, App, HttpRequest, HttpResponse, Result};
 use askama::Template; // bring trait in scope
 
 fn main() {
-    let sys = actix::System::new("guide");
+    let sys = actix::System::new("amp-examples");
 
-    HttpServer::new(|| {
-        vec![
-            App::new().resource("/start", |r| r.method(Method::GET).f(start)),
-            App::new().resource("/index.html", |r| r.method(Method::GET).f(index)),
-        ]
+    let addr = server::new(|| {
+        App::new()
+            // register simple route, handle all methods
+            .resource("/start", |r| r.method(Method::GET).f(start))
+            // with path parameters
+            .resource("/index.html", |r| r.method(Method::GET).f(index))
     }).bind("127.0.0.1:8080")
     .unwrap()
     .start();
