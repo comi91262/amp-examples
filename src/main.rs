@@ -20,7 +20,7 @@ struct BasisTemplate<'a> {
                    // in your template
 }
 
-use actix_web::{http::Method, server, App, HttpRequest, HttpResponse, Result};
+use actix_web::{http::Method, server, App, fs, HttpRequest, HttpResponse, Result};
 use askama::Template; // bring trait in scope
 
 fn main() {
@@ -32,6 +32,7 @@ fn main() {
             .resource("/start", |r| r.method(Method::GET).f(start))
             // with path parameters
             .resource("/index.html", |r| r.method(Method::GET).f(index))
+            .handler("/static", fs::StaticFiles::new("static").unwrap())
     }).bind("127.0.0.1:8080")
     .unwrap()
     .start();
@@ -47,8 +48,8 @@ fn index(_req: &HttpRequest) -> Result<HttpResponse> {
 }
 
 fn start(_req: &HttpRequest) -> Result<HttpResponse> {
-    let hello = BasisTemplate { name: "world" };
+    let basis = BasisTemplate { name: "world" };
     Ok(HttpResponse::Ok()
         .content_type("text/html")
-        .body(hello.render().unwrap()))
+        .body(basis.render().unwrap()))
 }
