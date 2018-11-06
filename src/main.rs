@@ -1,26 +1,22 @@
 extern crate actix;
 extern crate actix_web;
 #[macro_use]
-extern crate askama; // for the Template trait and custom derive macro
+extern crate askama;
 
-#[derive(Template)] // this will generate the code...
-#[template(path = "index.html")] // using the template in this path, relative
+#[derive(Template)]
+#[template(path = "index.html")]
 
 struct HelloTemplate<'a> {
-    // the name of the struct can be anything
-    name: &'a str, // the field name should match the variable name
-                   // in your template
+    name: &'a str,
 }
 
-#[derive(Template)] // this will generate the code...
-#[template(path = "article.amp.html")] // using the template in this path, relative
+#[derive(Template)]
+#[template(path = "article.amp.html")]
 struct BasisTemplate<'a> {
-    // the name of the struct can be anything
-    name: &'a str, // the field name should match the variable name
-                   // in your template
+    name: &'a str,
 }
 
-use actix_web::{http::Method, server, App, fs, HttpRequest, HttpResponse, Result};
+use actix_web::{fs, http::Method, server, App, HttpRequest, HttpResponse, Result};
 use askama::Template; // bring trait in scope
 
 fn main() {
@@ -28,10 +24,8 @@ fn main() {
 
     let addr = server::new(|| {
         App::new()
-            // register simple route, handle all methods
-            .resource("/start", |r| r.method(Method::GET).f(start))
-            // with path parameters
             .resource("/index.html", |r| r.method(Method::GET).f(index))
+            .resource("/basis", |r| r.method(Method::GET).f(basis))
             .handler("/static", fs::StaticFiles::new("static").unwrap())
     }).bind("127.0.0.1:8080")
     .unwrap()
@@ -47,7 +41,7 @@ fn index(_req: &HttpRequest) -> Result<HttpResponse> {
         .body(hello.render().unwrap()))
 }
 
-fn start(_req: &HttpRequest) -> Result<HttpResponse> {
+fn basis(_req: &HttpRequest) -> Result<HttpResponse> {
     let basis = BasisTemplate { name: "world" };
     Ok(HttpResponse::Ok()
         .content_type("text/html")
